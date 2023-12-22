@@ -1,0 +1,12 @@
+<!-- social/add_comment.html -->
+{% extends 'social/layout.html' %}
+
+{% block content %}
+  <h2>Comentar en el Post</h2>
+
+  <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Comentar</button>
+  </form>
+{% endblock %}

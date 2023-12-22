@@ -1,0 +1,107 @@
+{% extends 'social/layout.html' %}
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .messages-container {
+        padding: 20px;
+        background-color: #f0f0f0;
+    }
+
+    .message-input {
+        background-color: #fff;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-input textarea {
+        width: calc(100% - 20px);
+        height: 40px;
+        resize: none;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .message-input button {
+        background-color: #3897f0;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Estilos para mensajes enviados (del usuario actual) */
+    .sent {
+        text-align: right;
+        background-color: #3897f0;
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        max-width: 70%;
+        word-wrap: break-word;
+        font-size: 18px; /* Tamaño del texto en los mensajes enviados */
+    }
+
+    /* Estilos para mensajes recibidos (del otro usuario) */
+    .received {
+        text-align: left;
+        background-color: #f1f1f1;
+        color: #333;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        max-width: 70%;
+        word-wrap: break-word;
+        font-size: 18px; /* Tamaño del texto en los mensajes recibidos */
+    }
+
+    /* Estilos para el título de la conversación */
+    h2.conversation-title {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #262626; /* Color del texto */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Estilos para la foto de perfil en el título */
+    img.conversation-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    
+</style>
+
+<!-- Resto del contenido -->
+<h2 class="conversation-title">
+    <img class="conversation-avatar" src="{{ receiver.profile.image.url }}" alt="{{ receiver.username }} Avatar">
+    Conversación con {{ receiver.username }}
+</h2>
+<ul>
+    {% for message in messages %}
+        <li class="{% if message.sender == request.user %}sent{% else %}received{% endif %}">
+            <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+            <small>{{ message.timestamp }}</small>
+        </li>
+    {% endfor %}
+</ul>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enviar Mensaje</button>
+</form>
+{% endblock %}

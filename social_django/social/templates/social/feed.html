@@ -1,0 +1,111 @@
+{% extends 'social/layout.html' %}
+{% load humanize %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+
+<style>
+    .delete-button {
+        background-color: #FF0000;
+        color: white;
+        padding: 5px 8px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .comment-button {
+        background-color: #00ff4c;
+        color: white;
+        padding: 5px 8px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+
+            }
+
+    .like-container {
+    display: flex; /* Utilizar un modelo de caja flexible */
+    align-items: center; /* Alinear elementos verticalmente en el centro */
+    }
+    
+    .like-button {
+    background-color: #21c92c;
+    color: white;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+
+    .heart-icon::before {
+    content: '\2665'; /* Representa un corazón en la mayoría de las fuentes de iconos */
+    color: red; /* Color del corazón */
+    font-size: 24px; /* Ajusta el tamaño del corazón según tus preferencias */
+    margin-left: 5px; /* Agregar un pequeño espacio entre el botón y el contador */
+        }
+    
+</style>
+
+{% for post in posts %}
+<article>
+    <div class="container-article">
+        {% if post.user.profile.image %}
+            <img src="{{ post.user.profile.image.url }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 90;">
+        {% else %}
+            <img src="{% static 'default_profile_image.jpg' %}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 90;">
+        {% endif %}
+        <div>
+            <h2 class="username"><a href="{% url 'profile' post.user.username %}">@{{ post.user.username }}</a></h2>
+            <i class="clock"></i>
+            <time data-time="#">{{ post.timestamp|naturaltime }}</time>
+            <div class="post">{{ post.content }}</div>
+            
+            {% if post.imagen %}
+                <div class="photo-container">
+                    <img src="{{ post.imagen.url }}" alt="Imagen del post" style="width: 100%; height: auto; max-width: 600px; object-fit: cover; border-radius: 0;">
+                </div>
+            {% endif %}
+            
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <div class="like-container">
+                <a href="{% url 'dar_like' post.id %}" class="like-button">Like</a>
+                <span class="like-count">{{ post.cantidad_likes }}</span>
+            </div>
+            
+            <p><span class="heart-icon"></span>{{ post.cantidad_likes }} likes</p>
+
+            <!-- Agregar enlace para comentarios -->
+            <a href="{% url 'add_comment' post.id %}" class="comment-button btn btn-primary">Comentar</a>
+
+            {% if post.user == request.user %}
+                <a href="{% url 'delete_post' post.id %}" class="btn btn-danger delete-button">Eliminar post</a>
+            {% endif %}
+            
+            <!-- Mostrar comentarios -->
+            <div class="comment-container">
+                {% for comment in post.comment_set.all %}
+                    <div>
+                        <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</article>
+{% endfor %}
+
+{% endblock %}
